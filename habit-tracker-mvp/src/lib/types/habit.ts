@@ -1,13 +1,20 @@
 // Habit-related type definitions
 
+import { HabitFrequency, CustomFrequency } from '../utils/frequency'
+
 export interface Habit {
   id: string
   user_id: string
-  title: string
+  name: string
   description?: string
   color: string
   category?: string
-  target_frequency: number // times per day
+  frequency_type: HabitFrequency
+  frequency_config?: Record<string, any>
+  custom_interval_type?: 'days' | 'weeks'
+  custom_interval_value?: number
+  custom_specific_days?: number[]
+  target_count: number
   is_active: boolean
   created_at: string
   updated_at: string
@@ -17,26 +24,35 @@ export interface HabitCompletion {
   id: string
   habit_id: string
   user_id: string
-  completed_date: string // YYYY-MM-DD format
-  completed_count: number
   completed_at: string
+  completion_date: string
+  notes?: string
+  quantity: number
+  created_at: string
 }
 
-export interface CreateHabitInput {
-  title: string
+export interface CreateHabitData {
+  name: string
   description?: string
   color?: string
   category?: string
-  target_frequency?: number
+  frequency_type: HabitFrequency
+  custom_interval_type?: 'days' | 'weeks'
+  custom_interval_value?: number
+  custom_specific_days?: number[]
+  target_count?: number
 }
 
-export interface UpdateHabitInput {
-  title?: string
-  description?: string
-  color?: string
-  category?: string
-  target_frequency?: number
+export interface UpdateHabitData extends Partial<CreateHabitData> {
   is_active?: boolean
+}
+
+export interface HabitWithCompletions extends Habit {
+  completions: HabitCompletion[]
+  currentStreak: number
+  lastCompleted?: string
+  isCompletedToday: boolean
+  nextDueDate?: string
 }
 
 export interface HabitWithStats extends Habit {
