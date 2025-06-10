@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { AuthProvider } from "@/components/auth/AuthProvider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -83,13 +84,15 @@ export default function RootLayout({
         <meta name="msapplication-tap-highlight" content="no" />
       </head>
       <body className={`${inter.variable} font-sans antialiased min-h-screen bg-background text-foreground`}>
-        <div id="root" className="relative flex min-h-screen flex-col">
-          <main className="flex-1">
-            {children}
-          </main>
-        </div>
-        <div id="modal-root" />
-        <div id="toast-root" />
+        <AuthProvider>
+          <div id="root" className="relative flex min-h-screen flex-col">
+            <main className="flex-1">
+              {children}
+            </main>
+          </div>
+          <div id="modal-root" />
+          <div id="toast-root" />
+        </AuthProvider>
       </body>
     </html>
   );
