@@ -132,6 +132,7 @@ export const useHabitStore = create<HabitState>()(
       },
 
       toggleHabitCompletion: async (habitId: string) => {
+        console.log('🔄 Starting toggleHabitCompletion for habit:', habitId)
         try {
           const response = await fetch(`/api/habits/${habitId}/complete`, {
             method: 'POST',
@@ -140,19 +141,29 @@ export const useHabitStore = create<HabitState>()(
             },
           })
 
+          console.log('📡 API Response status:', response.status, response.statusText)
+
           if (!response.ok) {
+            const errorText = await response.text()
+            console.error('❌ API Error Response:', errorText)
             throw new Error(`Failed to toggle completion: ${response.statusText}`)
           }
 
           const result = await response.json()
+          console.log('📦 API Result:', result)
           
           if (result.error) {
+            console.error('❌ API returned error:', result.error)
             throw new Error(result.error)
           }
 
           // Update the habit completion status in the store
-          set((state) => ({
-            habits: state.habits.map(habit => 
+          set((state) => {
+            console.log('🔄 Updating habit state. Before:', 
+              state.habits.find(h => h.id === habitId)?.isCompletedToday
+            )
+            
+            const updatedHabits = state.habits.map(habit => 
               habit.id === habitId 
                 ? { 
                     ...habit, 
@@ -161,9 +172,17 @@ export const useHabitStore = create<HabitState>()(
                   }
                 : habit
             )
-          }))
+            
+            console.log('✅ Updated habit state. After:', 
+              updatedHabits.find(h => h.id === habitId)?.isCompletedToday
+            )
+            
+            return { habits: updatedHabits }
+          })
+
+          console.log('🎉 Toggle completion successful!')
         } catch (error) {
-          console.error('Error toggling habit completion:', error)
+          console.error('💥 Error toggling habit completion:', error)
           set({ 
             error: error instanceof Error ? error.message : 'Failed to toggle completion'
           })
