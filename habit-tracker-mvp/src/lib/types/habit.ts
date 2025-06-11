@@ -18,6 +18,9 @@ export interface Habit {
   is_active: boolean
   created_at: string
   updated_at: string
+  // Added for completion tracking
+  isCompletedToday?: boolean
+  completionData?: HabitCompletion | null
 }
 
 export interface HabitCompletion {

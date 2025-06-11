@@ -10,6 +10,7 @@ interface HabitState {
   // Actions
   fetchHabits: () => Promise<void>
   createHabit: (habitData: CreateHabitData) => Promise<void>
+  toggleHabitCompletion: (habitId: string) => Promise<void>
   setLoading: (loading: boolean) => void
   setError: (error: string | null) => void
   clearError: () => void
@@ -87,6 +88,46 @@ export const useHabitStore = create<HabitState>()(
             loading: false 
           })
           throw error // Re-throw so the component can handle it
+        }
+      },
+
+      toggleHabitCompletion: async (habitId: string) => {
+        try {
+          const response = await fetch(`/api/habits/${habitId}/complete`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          })
+
+          if (!response.ok) {
+            throw new Error(`Failed to toggle completion: ${response.statusText}`)
+          }
+
+          const result = await response.json()
+          
+          if (result.error) {
+            throw new Error(result.error)
+          }
+
+          // Update the habit completion status in the store
+          set((state) => ({
+            habits: state.habits.map(habit => 
+              habit.id === habitId 
+                ? { 
+                    ...habit, 
+                    isCompletedToday: result.isCompleted,
+                    completionData: result.completion 
+                  }
+                : habit
+            )
+          }))
+        } catch (error) {
+          console.error('Error toggling habit completion:', error)
+          set({ 
+            error: error instanceof Error ? error.message : 'Failed to toggle completion'
+          })
+          throw error
         }
       },
 

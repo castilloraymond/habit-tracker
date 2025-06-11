@@ -50,40 +50,50 @@ export function Modal({
   if (!isOpen) return null
 
   const modalContent = (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      onClick={handleOverlayClick}
-    >
+    <>
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black bg-opacity-50 transition-opacity" />
-      
-      {/* Modal */}
       <div
-        ref={modalRef}
-        className={cn(
-          'relative z-10 w-full max-w-lg bg-white rounded-lg shadow-xl',
-          'transform transition-all max-h-[90vh] overflow-y-auto',
-          className
-        )}
-        onClick={(e) => e.stopPropagation()}
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          zIndex: 1000,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '16px'
+        }}
+        onClick={handleOverlayClick}
       >
-        {children}
+        {/* Modal Content */}
+        <div
+          ref={modalRef}
+          style={{
+            backgroundColor: 'white',
+            borderRadius: '8px',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+            maxWidth: '32rem',
+            width: '100%',
+            maxHeight: '90vh',
+            overflow: 'auto',
+            position: 'relative',
+            zIndex: 1001
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {children}
+        </div>
       </div>
-    </div>
+    </>
   )
 
-  // Safely get modal root, fallback to body if not found
-  const modalRoot = typeof document !== 'undefined' ? document.getElementById('modal-root') : null
-  
-  if (!modalRoot) {
-    // Only warn in development and if we're in the browser
-    if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
-      console.warn('modal-root element not found, falling back to document.body')
-    }
-    return typeof document !== 'undefined' ? createPortal(modalContent, document.body) : null
-  }
+  // Always use document.body for modal portal
+  if (typeof document === 'undefined') return null
 
-  return createPortal(modalContent, modalRoot)
+  return createPortal(modalContent, document.body)
 }
 
 // Modal Header Component
