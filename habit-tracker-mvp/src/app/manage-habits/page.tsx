@@ -1,13 +1,13 @@
 'use client'
 
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Modal, ModalContent } from '@/components/ui/Modal'
 import { HabitForm } from '@/components/forms/HabitForm'
 import { EditHabitForm } from '@/components/forms/EditHabitForm'
 import { useState, useEffect } from 'react'
 import { useHabitStore } from '@/lib/stores/habitStore'
+import { HABIT_CATEGORIES } from '@/lib/constants/habits'
 import type { CreateHabitData, Habit } from '@/lib/types/habit'
 import Link from 'next/link'
 
@@ -28,7 +28,6 @@ export default function ManageHabitsPage() {
     try {
       await createHabit(habitData)
       setIsCreateModalOpen(false)
-      console.log('Habit created successfully!')
     } catch (error) {
       console.error('Error creating habit:', error)
     } finally {
@@ -49,7 +48,6 @@ export default function ManageHabitsPage() {
       await updateHabit(editingHabit.id, habitData)
       setIsEditModalOpen(false)
       setEditingHabit(null)
-      console.log('Habit updated successfully!')
     } catch (error) {
       console.error('Error editing habit:', error)
     } finally {
@@ -75,6 +73,12 @@ export default function ManageHabitsPage() {
       setEditingHabit(null)
       clearError()
     }
+  }
+
+  // Get category emoji for a habit
+  const getCategoryEmoji = (categoryId: string | undefined) => {
+    const category = HABIT_CATEGORIES.find(cat => cat.id === categoryId)
+    return category?.icon || '📝'
   }
 
   return (
@@ -125,84 +129,89 @@ export default function ManageHabitsPage() {
           {/* Habits List */}
           {!loading && habits.length === 0 ? (
             <div className="text-center py-12">
-              <Card className="w-full max-w-md mx-auto">
-                <CardHeader>
-                  <CardTitle>No Habits Yet</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto">
-                      <svg
-                        className="w-8 h-8 text-gray-400"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                      </svg>
-                    </div>
-                    <p className="text-gray-600">
-                      Start building better habits today! Create your first habit to begin tracking your progress.
-                    </p>
-                    <Button className="w-full" onClick={handleOpenCreateModal}>
-                      Create Your First Habit
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+              <div className="bg-white rounded-lg p-8 max-w-md mx-auto">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg
+                    className="w-8 h-8 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">No Habits Yet</h3>
+                <p className="text-gray-600 mb-4">
+                  Start building better habits today! Create your first habit to begin tracking your progress.
+                </p>
+                <Button className="w-full" onClick={handleOpenCreateModal}>
+                  Create Your First Habit
+                </Button>
+              </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {habits.map((habit) => (
-                <Card key={habit.id} className="relative">
-                  <CardHeader>
-                    <CardTitle className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div 
-                          className="w-4 h-4 rounded-full" 
-                          style={{ backgroundColor: habit.color }}
-                        />
-                        {habit.name}
-                      </div>
-                      <button
-                        onClick={() => handleEditHabit(habit)}
-                        className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
-                        title="Edit habit"
-                      >
-                        <svg
-                          className="w-4 h-4"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                          />
-                        </svg>
-                      </button>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-gray-600 mb-3">{habit.description || 'No description'}</p>
-                    <div className="flex justify-between items-center text-sm text-gray-500">
-                      <span className="capitalize">{habit.category || 'Other'}</span>
-                      <span className="capitalize">{habit.frequency_type || 'Daily'}</span>
+            /* Simple List Layout */
+            <div className="bg-white rounded-lg shadow-sm">
+              {habits.map((habit, index) => (
+                <div 
+                  key={habit.id} 
+                  className={`
+                    flex items-center justify-between p-4 hover:bg-gray-50 transition-colors
+                    ${index !== habits.length - 1 ? 'border-b border-gray-100' : ''}
+                  `}
+                >
+                  {/* Left side: Emoji + Habit Info */}
+                  <div className="flex items-center gap-4 flex-1">
+                    {/* Category Emoji */}
+                    <div className="text-2xl flex-shrink-0">
+                      {getCategoryEmoji(habit.category)}
                     </div>
-                    {habit.isCompletedToday && (
-                      <div className="mt-3 text-xs text-green-600 font-medium">
-                        ✓ Completed today
+                    
+                    {/* Habit Info */}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-medium text-gray-900 truncate">
+                        {habit.name}
+                      </h3>
+                      <div className="flex items-center gap-3 mt-1 text-sm text-gray-500">
+                        <span className="capitalize">{habit.frequency_type || 'Daily'}</span>
+                        <span>•</span>
+                        <span className="capitalize">{habit.category || 'Other'}</span>
+                        {habit.isCompletedToday && (
+                          <>
+                            <span>•</span>
+                            <span className="text-green-600 font-medium">✓ Completed today</span>
+                          </>
+                        )}
                       </div>
-                    )}
-                  </CardContent>
-                </Card>
+                    </div>
+                  </div>
+
+                  {/* Right side: Edit Button */}
+                  <button
+                    onClick={() => handleEditHabit(habit)}
+                    className="p-2 text-gray-400 hover:text-blue-600 transition-colors rounded-md hover:bg-blue-50"
+                    title="Edit habit"
+                  >
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                      />
+                    </svg>
+                  </button>
+                </div>
               ))}
             </div>
           )}
@@ -211,12 +220,7 @@ export default function ManageHabitsPage() {
 
       {/* Create Habit Modal */}
       <Modal isOpen={isCreateModalOpen} onClose={handleCloseCreateModal}>
-        <ModalContent className="p-8">
-          {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded text-red-800 text-sm">
-              {error}
-            </div>
-          )}
+        <ModalContent>
           <HabitForm
             onSubmit={handleCreateHabit}
             onCancel={handleCloseCreateModal}
@@ -227,12 +231,7 @@ export default function ManageHabitsPage() {
 
       {/* Edit Habit Modal */}
       <Modal isOpen={isEditModalOpen} onClose={handleCloseEditModal}>
-        <ModalContent className="p-8">
-          {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded text-red-800 text-sm">
-              {error}
-            </div>
-          )}
+        <ModalContent>
           {editingHabit && (
             <EditHabitForm
               habit={editingHabit}
