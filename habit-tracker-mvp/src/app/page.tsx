@@ -1,10 +1,18 @@
 'use client'
 
 import Link from 'next/link'
+import { useEffect } from 'react'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
+import { useHabitStore } from '@/lib/stores/habitStore'
 
 export default function Dashboard() {
+  const { habits, loading, fetchHabits } = useHabitStore()
+
+  useEffect(() => {
+    fetchHabits()
+  }, [fetchHabits])
+
   return (
     <ProtectedRoute>
       <div className="container mx-auto py-8 px-4">
@@ -19,7 +27,9 @@ export default function Dashboard() {
               <CardTitle>Today's Habits</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold text-blue-600">0</p>
+              <p className="text-2xl font-bold text-blue-600">
+                {loading ? '...' : habits.length}
+              </p>
               <p className="text-sm text-gray-600">habits to complete</p>
             </CardContent>
           </Card>

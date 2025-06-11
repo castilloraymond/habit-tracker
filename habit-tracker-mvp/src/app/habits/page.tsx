@@ -5,43 +5,47 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Modal, ModalContent } from '@/components/ui/Modal'
 import { HabitForm } from '@/components/forms/HabitForm'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useHabitStore } from '@/lib/stores/habitStore'
 import type { CreateHabitData } from '@/lib/types/habit'
 
 export default function HabitsPage() {
-  const [habits] = useState([])
+  const { habits, loading, error, fetchHabits, createHabit, clearError } = useHabitStore()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // Fetch habits on component mount
+  useEffect(() => {
+    fetchHabits()
+  }, [fetchHabits])
 
   const handleCreateHabit = async (habitData: CreateHabitData) => {
     setIsSubmitting(true)
     try {
-      // TODO: Implement API call to create habit
-      console.log('Creating habit:', habitData)
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      await createHabit(habitData)
       
       // Close modal on success
       setIsModalOpen(false)
       
-      // TODO: Refresh habits list or add to local state
-      alert('Habit created successfully!')
+      // Success message
+      console.log('Habit created successfully!')
     } catch (error) {
       console.error('Error creating habit:', error)
-      alert('Failed to create habit. Please try again.')
+      // Error is already handled by the store
     } finally {
       setIsSubmitting(false)
     }
   }
 
   const handleOpenModal = () => {
+    clearError() // Clear any previous errors
     setIsModalOpen(true)
   }
 
   const handleCloseModal = () => {
     if (!isSubmitting) { // Prevent closing while submitting
       setIsModalOpen(false)
+      clearError() // Clear errors when closing modal
     }
   }
 
@@ -54,12 +58,32 @@ export default function HabitsPage() {
               <h1 className="text-3xl font-bold text-gray-900">My Habits</h1>
               <p className="text-gray-600 mt-2">Manage and track your daily habits</p>
             </div>
-            <Button onClick={handleOpenModal}>
+            <Button onClick={handleOpenModal} disabled={loading}>
               + Add New Habit
             </Button>
           </div>
 
-          {habits.length === 0 ? (
+          {/* Error Display */}
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-red-800 text-sm">{error}</p>
+              <Button 
+                onClick={clearError} 
+                className="mt-2 text-xs bg-red-100 text-red-800 hover:bg-red-200"
+              >
+                Dismiss
+              </Button>
+            </div>
+          )}
+
+          {/* Loading State */}
+          {loading && habits.length === 0 && (
+            <div className="flex justify-center items-center py-12">
+              <div className="text-gray-500">Loading habits...</div>
+            </div>
+          )}
+
+          {!loading && habits.length === 0 ? (
             <div className="text-center py-12">
               <Card className="w-full max-w-md mx-auto" style={{maxWidth: '30rem', minWidth: '30rem'}}>
                 <CardHeader>
@@ -94,14 +118,23 @@ export default function HabitsPage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {/* Habits will be displayed here when implemented */}
-              {habits.map((habit: any) => (
+              {habits.map((habit) => (
                 <Card key={habit.id}>
                   <CardHeader>
-                    <CardTitle>{habit.name}</CardTitle>
+                    <CardTitle className="flex items-center gap-2">
+                      <div 
+                        className="w-4 h-4 rounded-full" 
+                        style={{ backgroundColor: habit.color }}
+                      />
+                      {habit.name}
+                    </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-gray-600">{habit.description}</p>
+                    <p className="text-gray-600 mb-2">{habit.description || 'No description'}</p>
+                    <div className="flex justify-between items-center text-sm text-gray-500">
+                      <span className="capitalize">{habit.category || 'Other'}</span>
+                      <span>{habit.frequency_type || 'daily'}</span>
+                    </div>
                   </CardContent>
                 </Card>
               ))}
@@ -112,7 +145,12 @@ export default function HabitsPage() {
 
       {/* Habit Creation Modal */}
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
-        <ModalContent className="max-w-lg">
+        <ModalContent className="p-8">
+          {error && (
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded text-red-800 text-sm">
+              {error}
+            </div>
+          )}
           <HabitForm
             onSubmit={handleCreateHabit}
             onCancel={handleCloseModal}
