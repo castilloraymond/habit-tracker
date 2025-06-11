@@ -9,20 +9,11 @@ import { useState } from 'react'
 import type { CreateHabitData } from '@/lib/types/habit'
 
 export default function HabitsPage() {
-  console.log('🚀 HabitsPage: Component initializing')
-  
   const [habits] = useState([])
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  console.log('📊 HabitsPage State:', { 
-    habitsLength: habits.length, 
-    isModalOpen, 
-    isSubmitting
-  })
-
   const handleCreateHabit = async (habitData: CreateHabitData) => {
-    console.log('🎯 HabitsPage: handleCreateHabit called', habitData)
     setIsSubmitting(true)
     try {
       // TODO: Implement API call to create habit
@@ -45,18 +36,14 @@ export default function HabitsPage() {
   }
 
   const handleOpenModal = () => {
-    console.log('🔓 HabitsPage: Opening modal')
     setIsModalOpen(true)
   }
 
   const handleCloseModal = () => {
-    console.log('🔒 HabitsPage: Closing modal')
     if (!isSubmitting) { // Prevent closing while submitting
       setIsModalOpen(false)
     }
   }
-
-  console.log('🎨 HabitsPage: Rendering main content')
 
   return (
     <ProtectedRoute>

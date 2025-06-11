@@ -73,10 +73,14 @@ export function Modal({
   )
 
   // Safely get modal root, fallback to body if not found
-  const modalRoot = document.getElementById('modal-root')
+  const modalRoot = typeof document !== 'undefined' ? document.getElementById('modal-root') : null
+  
   if (!modalRoot) {
-    console.warn('modal-root element not found, falling back to document.body')
-    return createPortal(modalContent, document.body)
+    // Only warn in development and if we're in the browser
+    if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+      console.warn('modal-root element not found, falling back to document.body')
+    }
+    return typeof document !== 'undefined' ? createPortal(modalContent, document.body) : null
   }
 
   return createPortal(modalContent, modalRoot)
