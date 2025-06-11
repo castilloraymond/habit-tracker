@@ -10,6 +10,7 @@ interface HabitState {
   // Actions
   fetchHabits: () => Promise<void>
   createHabit: (habitData: CreateHabitData) => Promise<void>
+  updateHabit: (habitId: string, habitData: CreateHabitData) => Promise<void>
   toggleHabitCompletion: (habitId: string) => Promise<void>
   setLoading: (loading: boolean) => void
   setError: (error: string | null) => void
@@ -88,6 +89,45 @@ export const useHabitStore = create<HabitState>()(
             loading: false 
           })
           throw error // Re-throw so the component can handle it
+        }
+      },
+
+      updateHabit: async (habitId: string, habitData: CreateHabitData) => {
+        set({ loading: true, error: null })
+        
+        try {
+          const response = await fetch(`/api/habits/${habitId}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(habitData),
+          })
+
+          if (!response.ok) {
+            throw new Error(`Failed to update habit: ${response.statusText}`)
+          }
+
+          const result = await response.json()
+          
+          if (result.error) {
+            throw new Error(result.error)
+          }
+
+          // Update the habit in the store
+          set((state) => ({
+            habits: state.habits.map(habit => 
+              habit.id === habitId ? { ...habit, ...result.data } : habit
+            ),
+            loading: false
+          }))
+        } catch (error) {
+          console.error('Error updating habit:', error)
+          set({ 
+            error: error instanceof Error ? error.message : 'Failed to update habit',
+            loading: false 
+          })
+          throw error
         }
       },
 

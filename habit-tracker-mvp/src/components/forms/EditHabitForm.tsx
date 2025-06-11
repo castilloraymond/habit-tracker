@@ -3,22 +3,22 @@ import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { HABIT_CATEGORIES } from '@/lib/constants/habits'
 import { validateHabitForm } from '@/lib/utils/validation'
-import type { CreateHabitData } from '@/lib/types/habit'
+import type { CreateHabitData, Habit } from '@/lib/types/habit'
 import type { HabitFrequency } from '@/lib/utils/frequency'
 
-interface HabitFormProps {
+interface EditHabitFormProps {
+  habit: Habit
   onSubmit: (data: CreateHabitData) => void
   onCancel: () => void
   isSubmitting?: boolean
 }
 
-export function HabitForm({ onSubmit, onCancel, isSubmitting = false }: HabitFormProps) {
+export function EditHabitForm({ habit, onSubmit, onCancel, isSubmitting = false }: EditHabitFormProps) {
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    category: 'other' as const,
-    frequency: 'daily' as HabitFrequency,
-    targetFrequency: 1,
+    title: habit.name,
+    description: habit.description || '',
+    category: habit.category || 'other' as const,
+    targetFrequency: habit.target_count || 1,
   })
   const [errors, setErrors] = useState<string[]>([])
 
@@ -29,7 +29,7 @@ export function HabitForm({ onSubmit, onCancel, isSubmitting = false }: HabitFor
       title: formData.title,
       description: formData.description,
       targetFrequency: formData.targetFrequency,
-      color: '#3B82F6', // Default blue color
+      color: habit.color, // Keep existing color
     })
     
     if (!validation.isValid) {
@@ -42,9 +42,9 @@ export function HabitForm({ onSubmit, onCancel, isSubmitting = false }: HabitFor
     const habitData: CreateHabitData = {
       name: formData.title,
       description: formData.description,
-      color: '#3B82F6', // Default blue color
+      color: habit.color, // Keep existing color
       category: formData.category,
-      frequency_type: formData.frequency,
+      frequency_type: habit.frequency_type as HabitFrequency,
       target_count: formData.targetFrequency,
     }
     
@@ -61,8 +61,8 @@ export function HabitForm({ onSubmit, onCancel, isSubmitting = false }: HabitFor
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="pb-4 border-b border-gray-200">
-        <h2 className="text-xl font-semibold text-gray-900 mb-1">Create New Habit</h2>
-        <p className="text-sm text-gray-600">Build a new healthy routine to track daily.</p>
+        <h2 className="text-xl font-semibold text-gray-900 mb-1">Edit Habit</h2>
+        <p className="text-sm text-gray-600">Update your habit details.</p>
       </div>
       
       {errors.length > 0 && (
@@ -118,14 +118,11 @@ export function HabitForm({ onSubmit, onCancel, isSubmitting = false }: HabitFor
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Frequency
           </label>
-          <select
-            value={formData.frequency}
-            onChange={(e) => handleInputChange('frequency', e.target.value as HabitFrequency)}
-            className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition-colors duration-200 bg-white"
-          >
-            <option value="daily">Daily</option>
-            <option value="weekly">Weekly</option>
-          </select>
+          <div className="p-3 bg-gray-50 rounded-md text-sm text-gray-600">
+            Currently: <span className="font-medium capitalize">{habit.frequency_type || 'Daily'}</span>
+            <br />
+            <span className="text-xs text-gray-500">Frequency cannot be changed after creation</span>
+          </div>
         </div>
 
         <div>
@@ -161,7 +158,7 @@ export function HabitForm({ onSubmit, onCancel, isSubmitting = false }: HabitFor
           disabled={isSubmitting}
           className="flex-1"
         >
-          {isSubmitting ? 'Creating...' : 'Create Habit'}
+          {isSubmitting ? 'Saving...' : 'Save Changes'}
         </Button>
       </div>
     </form>
