@@ -11,6 +11,9 @@ interface ModalProps {
   className?: string
   closeOnOverlayClick?: boolean
   closeOnEscape?: boolean
+  size?: 'sm' | 'md' | 'lg' | 'xl'
+  'aria-labelledby'?: string
+  'aria-describedby'?: string
 }
 
 export function Modal({
@@ -20,24 +23,86 @@ export function Modal({
   className,
   closeOnOverlayClick = true,
   closeOnEscape = true,
+  size = 'md',
+  'aria-labelledby': ariaLabelledBy,
+  'aria-describedby': ariaDescribedBy,
 }: ModalProps) {
   const modalRef = useRef<HTMLDivElement>(null)
+  const previousActiveElement = useRef<HTMLElement | null>(null)
 
+  // Focus management and keyboard handling
   useEffect(() => {
+    if (!isOpen) return
+
+    // Store the previously focused element
+    previousActiveElement.current = document.activeElement as HTMLElement
+
+    // Focus the modal when it opens
+    const focusModal = () => {
+      if (modalRef.current) {
+        // Try to focus the first focusable element, or the modal itself
+        const focusableElements = modalRef.current.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        )
+        
+        if (focusableElements.length > 0) {
+          (focusableElements[0] as HTMLElement).focus()
+        } else {
+          modalRef.current.focus()
+        }
+      }
+    }
+
+    // Small delay to ensure the modal is rendered
+    const timeoutId = setTimeout(focusModal, 100)
+
     const handleEscape = (event: KeyboardEvent) => {
       if (closeOnEscape && event.key === 'Escape') {
         onClose()
       }
     }
 
-    if (isOpen) {
-      document.addEventListener('keydown', handleEscape)
-      document.body.style.overflow = 'hidden'
+    const handleTabTrap = (event: KeyboardEvent) => {
+      if (event.key !== 'Tab' || !modalRef.current) return
+
+      const focusableElements = modalRef.current.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      )
+
+      const firstElement = focusableElements[0] as HTMLElement
+      const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement
+
+      if (!firstElement) return
+
+      if (event.shiftKey) {
+        // Shift + Tab
+        if (document.activeElement === firstElement) {
+          event.preventDefault()
+          lastElement?.focus()
+        }
+      } else {
+        // Tab
+        if (document.activeElement === lastElement) {
+          event.preventDefault()
+          firstElement.focus()
+        }
+      }
     }
 
+    document.addEventListener('keydown', handleEscape)
+    document.addEventListener('keydown', handleTabTrap)
+    document.body.style.overflow = 'hidden'
+
     return () => {
+      clearTimeout(timeoutId)
       document.removeEventListener('keydown', handleEscape)
+      document.removeEventListener('keydown', handleTabTrap)
       document.body.style.overflow = 'unset'
+      
+      // Restore focus to the previously focused element
+      if (previousActiveElement.current) {
+        previousActiveElement.current.focus()
+      }
     }
   }, [isOpen, onClose, closeOnEscape])
 
@@ -49,45 +114,44 @@ export function Modal({
 
   if (!isOpen) return null
 
+  const sizeClasses = {
+    sm: 'max-w-md',
+    md: 'max-w-lg',
+    lg: 'max-w-2xl',
+    xl: 'max-w-4xl',
+  }
+
   const modalContent = (
-    <>
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
+      onClick={handleOverlayClick}
+    >
       {/* Backdrop */}
+      <div 
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
+        aria-hidden="true"
+      />
+      
+      {/* Modal Content */}
       <div
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          zIndex: 1000,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '16px'
-        }}
-        onClick={handleOverlayClick}
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={ariaLabelledBy}
+        aria-describedby={ariaDescribedBy}
+        tabIndex={-1}
+        className={cn(
+          'relative bg-white rounded-lg shadow-xl w-full transition-all transform',
+          'max-h-[90vh] overflow-hidden flex flex-col',
+          'animate-in fade-in-0 zoom-in-95 duration-200',
+          sizeClasses[size],
+          className
+        )}
+        onClick={(e) => e.stopPropagation()}
       >
-        {/* Modal Content */}
-        <div
-          ref={modalRef}
-          style={{
-            backgroundColor: 'white',
-            borderRadius: '8px',
-            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-            maxWidth: '32rem',
-            width: '100%',
-            maxHeight: '90vh',
-            overflow: 'auto',
-            position: 'relative',
-            zIndex: 1001
-          }}
-          onClick={(e) => e.stopPropagation()}
-        >
-          {children}
-        </div>
+        {children}
       </div>
-    </>
+    </div>
   )
 
   // Always use document.body for modal portal
@@ -101,22 +165,28 @@ interface ModalHeaderProps {
   children: React.ReactNode
   onClose?: () => void
   className?: string
+  id?: string
 }
 
-export function ModalHeader({ children, onClose, className }: ModalHeaderProps) {
+export function ModalHeader({ children, onClose, className, id }: ModalHeaderProps) {
   return (
-    <div className={cn('flex items-center justify-between p-6 border-b', className)}>
-      <div className="text-lg font-semibold">{children}</div>
+    <div className={cn('flex items-center justify-between p-6 border-b border-gray-200 bg-white rounded-t-lg', className)}>
+      <div id={id} className="text-lg font-semibold text-gray-900 pr-4">
+        {children}
+      </div>
       {onClose && (
         <button
           onClick={onClose}
-          className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+          type="button"
+          aria-label="Close modal"
+          className="flex-shrink-0 p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <svg
             className="w-5 h-5"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
+            aria-hidden="true"
           >
             <path
               strokeLinecap="round"
@@ -135,11 +205,12 @@ export function ModalHeader({ children, onClose, className }: ModalHeaderProps) 
 interface ModalContentProps {
   children: React.ReactNode
   className?: string
+  id?: string
 }
 
-export function ModalContent({ children, className }: ModalContentProps) {
+export function ModalContent({ children, className, id }: ModalContentProps) {
   return (
-    <div className={cn('p-6', className)}>
+    <div id={id} className={cn('flex-1 overflow-y-auto p-6 bg-white', className)}>
       {children}
     </div>
   )
@@ -153,7 +224,7 @@ interface ModalFooterProps {
 
 export function ModalFooter({ children, className }: ModalFooterProps) {
   return (
-    <div className={cn('flex items-center justify-end gap-3 p-6 border-t bg-gray-50', className)}>
+    <div className={cn('flex items-center justify-end gap-3 p-6 border-t border-gray-200 bg-gray-50 rounded-b-lg', className)}>
       {children}
     </div>
   )

@@ -6,6 +6,7 @@ import { StatsCard } from '@/components/analytics/StatsCard'
 import { HeatmapChart } from '@/components/analytics/HeatmapChart'
 import { CategoryChart } from '@/components/analytics/CategoryChart'
 import { Button } from '@/components/ui/Button'
+import { SkeletonCard, PageLoading } from '@/components/ui/Loading'
 import { useAnalyticsStore } from '@/lib/stores/analyticsStore'
 import { useEffect } from 'react'
 
@@ -71,8 +72,22 @@ export default function AnalyticsPage() {
 
           {/* Loading State */}
           {loading && !analytics && (
-            <div className="flex justify-center items-center py-12">
-              <div className="text-gray-500">Loading analytics...</div>
+            <div className="space-y-8">
+              {/* Loading skeleton for metrics cards */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <SkeletonCard key={i} />
+                ))}
+              </div>
+              
+              {/* Loading skeleton for charts */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div className="lg:col-span-2">
+                  <SkeletonCard />
+                </div>
+                <SkeletonCard />
+                <SkeletonCard />
+              </div>
             </div>
           )}
 

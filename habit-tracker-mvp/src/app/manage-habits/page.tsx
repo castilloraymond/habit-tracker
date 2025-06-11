@@ -3,9 +3,10 @@
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
 import { Header } from '@/components/layout/Header'
 import { Button } from '@/components/ui/Button'
-import { Modal, ModalContent } from '@/components/ui/Modal'
+import { Modal, ModalContent, ModalHeader } from '@/components/ui/Modal'
 import { HabitForm } from '@/components/forms/HabitForm'
 import { EditHabitForm } from '@/components/forms/EditHabitForm'
+import { SkeletonList } from '@/components/ui/Loading'
 import { useState, useEffect } from 'react'
 import { useHabitStore } from '@/lib/stores/habitStore'
 import { HABIT_CATEGORIES } from '@/lib/constants/habits'
@@ -112,9 +113,7 @@ export default function ManageHabitsPage() {
 
           {/* Loading State */}
           {loading && habits.length === 0 && (
-            <div className="flex justify-center items-center py-12">
-              <div className="text-gray-500">Loading habits...</div>
-            </div>
+            <SkeletonList items={5} />
           )}
 
           {/* Habits List */}
@@ -210,7 +209,15 @@ export default function ManageHabitsPage() {
       </div>
 
       {/* Create Habit Modal */}
-      <Modal isOpen={isCreateModalOpen} onClose={handleCloseCreateModal}>
+      <Modal 
+        isOpen={isCreateModalOpen} 
+        onClose={handleCloseCreateModal}
+        size="lg"
+        aria-labelledby="create-habit-title"
+      >
+        <ModalHeader id="create-habit-title" onClose={handleCloseCreateModal}>
+          Create New Habit
+        </ModalHeader>
         <ModalContent>
           <HabitForm
             onSubmit={handleCreateHabit}
@@ -221,7 +228,15 @@ export default function ManageHabitsPage() {
       </Modal>
 
       {/* Edit Habit Modal */}
-      <Modal isOpen={isEditModalOpen} onClose={handleCloseEditModal}>
+      <Modal 
+        isOpen={isEditModalOpen} 
+        onClose={handleCloseEditModal}
+        size="lg"
+        aria-labelledby="edit-habit-title"
+      >
+        <ModalHeader id="edit-habit-title" onClose={handleCloseEditModal}>
+          Edit Habit: {editingHabit?.name}
+        </ModalHeader>
         <ModalContent>
           {editingHabit && (
             <EditHabitForm

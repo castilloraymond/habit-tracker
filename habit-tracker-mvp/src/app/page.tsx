@@ -4,12 +4,12 @@ import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
 import { Header } from '@/components/layout/Header'
-// Removed unused Card imports - using simplified layout
 import { HorizontalProgress } from '@/components/ui/HorizontalProgress'
 import { HabitItem } from '@/components/habits/HabitItem'
-import { Modal, ModalContent } from '@/components/ui/Modal'
+import { Modal, ModalContent, ModalHeader } from '@/components/ui/Modal'
 import { HabitForm } from '@/components/forms/HabitForm'
 import { EditHabitForm } from '@/components/forms/EditHabitForm'
+import { SkeletonList, Loading } from '@/components/ui/Loading'
 import { useHabitStore } from '@/lib/stores/habitStore'
 import { useAuthStore } from '@/lib/stores/authStore'
 import { getWeeklyStreakDays } from '@/lib/utils/streaks'
@@ -148,8 +148,14 @@ export default function Dashboard() {
           </div>
 
           {loading && habits.length === 0 ? (
-            <div className="text-center py-8">
-              <div className="text-gray-500">Loading habits...</div>
+            <div className="space-y-6">
+              <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+                <div className="animate-pulse">
+                  <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
+                  <div className="h-2 bg-gray-300 rounded w-full"></div>
+                </div>
+              </div>
+              <SkeletonList items={3} />
             </div>
           ) : habits.length === 0 ? (
             <div className="text-center py-12">
@@ -240,30 +246,48 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Create Habit Modal */}
-        <Modal isOpen={isCreateModalOpen} onClose={handleCloseCreateModal}>
-          <ModalContent>
-            <HabitForm
-              onSubmit={handleCreateHabit}
-              onCancel={handleCloseCreateModal}
+              {/* Create Habit Modal */}
+      <Modal 
+        isOpen={isCreateModalOpen} 
+        onClose={handleCloseCreateModal}
+        size="lg"
+        aria-labelledby="create-habit-title"
+        aria-describedby="create-habit-description"
+      >
+        <ModalHeader id="create-habit-title" onClose={handleCloseCreateModal}>
+          Create New Habit
+        </ModalHeader>
+        <ModalContent id="create-habit-description">
+          <HabitForm
+            onSubmit={handleCreateHabit}
+            onCancel={handleCloseCreateModal}
+            isSubmitting={isSubmitting}
+          />
+        </ModalContent>
+      </Modal>
+
+      {/* Edit Habit Modal */}
+      <Modal 
+        isOpen={isEditModalOpen} 
+        onClose={handleCloseEditModal}
+        size="lg"
+        aria-labelledby="edit-habit-title"
+        aria-describedby="edit-habit-description"
+      >
+        <ModalHeader id="edit-habit-title" onClose={handleCloseEditModal}>
+          Edit Habit
+        </ModalHeader>
+        <ModalContent id="edit-habit-description">
+          {editingHabit && (
+            <EditHabitForm
+              habit={editingHabit}
+              onSubmit={handleEditSubmit}
+              onCancel={handleCloseEditModal}
               isSubmitting={isSubmitting}
             />
-          </ModalContent>
-        </Modal>
-
-        {/* Edit Habit Modal */}
-        <Modal isOpen={isEditModalOpen} onClose={handleCloseEditModal}>
-          <ModalContent>
-            {editingHabit && (
-              <EditHabitForm
-                habit={editingHabit}
-                onSubmit={handleEditSubmit}
-                onCancel={handleCloseEditModal}
-                isSubmitting={isSubmitting}
-              />
-            )}
-          </ModalContent>
-        </Modal>
+          )}
+        </ModalContent>
+      </Modal>
       </div>
     </ProtectedRoute>
   )
