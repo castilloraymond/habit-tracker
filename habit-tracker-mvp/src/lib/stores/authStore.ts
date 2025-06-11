@@ -6,6 +6,7 @@ interface AuthState {
   user: AuthUser | null
   loading: boolean
   initialized: boolean
+  initializing: boolean
   signIn: (email: string, password: string) => Promise<void>
   signUp: (email: string, password: string, name?: string) => Promise<void>
   signOut: () => Promise<void>
@@ -22,6 +23,7 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       loading: false,
       initialized: false,
+      initializing: false,
 
       signIn: async (email: string, password: string) => {
         set({ loading: true })
@@ -97,14 +99,17 @@ export const useAuthStore = create<AuthState>()(
       },
 
       initialize: async () => {
-        if (get().initialized) return
+        const state = get()
         
-        set({ loading: true })
+        if (state.initialized || state.initializing) {
+          return
+        }
+        
+        set({ loading: true, initializing: true })
         try {
           const user = await authService.getCurrentUser()
           set({ user, initialized: true })
 
-          // Set up auth state change listener
           authService.onAuthStateChange((user) => {
             set({ user })
           })
@@ -112,7 +117,7 @@ export const useAuthStore = create<AuthState>()(
           console.error('Auth initialization error:', error)
           set({ user: null, initialized: true })
         } finally {
-          set({ loading: false })
+          set({ loading: false, initializing: false })
         }
       },
 

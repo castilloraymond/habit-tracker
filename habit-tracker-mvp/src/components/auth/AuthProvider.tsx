@@ -23,16 +23,7 @@ interface AuthProviderProps {
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  console.log('🔑 AuthProvider: Component initializing')
-  
   const auth = useAuth()
-
-  console.log('🔑 AuthProvider State from useAuth:', { 
-    user: auth.user ? 'USER_EXISTS' : 'NO_USER', 
-    loading: auth.loading, 
-    initialized: auth.initialized,
-    isAuthenticated: auth.isAuthenticated
-  })
 
   return (
     <AuthContext.Provider value={auth}>
