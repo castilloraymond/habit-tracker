@@ -1,6 +1,7 @@
 'use client'
 
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
+import { Header } from '@/components/layout/Header'
 import { Button } from '@/components/ui/Button'
 import { Modal, ModalContent } from '@/components/ui/Modal'
 import { HabitForm } from '@/components/forms/HabitForm'
@@ -9,7 +10,6 @@ import { useState, useEffect } from 'react'
 import { useHabitStore } from '@/lib/stores/habitStore'
 import { HABIT_CATEGORIES } from '@/lib/constants/habits'
 import type { CreateHabitData, Habit } from '@/lib/types/habit'
-import Link from 'next/link'
 
 export default function ManageHabitsPage() {
   const { habits, loading, error, fetchHabits, createHabit, updateHabit, clearError } = useHabitStore()
@@ -84,28 +84,19 @@ export default function ManageHabitsPage() {
   return (
     <ProtectedRoute>
       <div className="min-h-screen bg-gray-50">
+        <Header 
+          showBackButton={true}
+          backHref="/"
+          title="Manage All Habits"
+          subtitle="Create, edit, and organize your habits"
+          actions={
+            <Button onClick={handleOpenCreateModal} disabled={loading}>
+              + Add New Habit
+            </Button>
+          }
+        />
+        
         <div className="container mx-auto py-8 px-4">
-          {/* Header */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900">Manage All Habits</h1>
-                <p className="text-gray-600 mt-2">Create, edit, and organize your habits</p>
-              </div>
-              <div className="flex gap-3">
-                <Link
-                  href="/"
-                  className="border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-md transition-colors"
-                >
-                  ← Back to Dashboard
-                </Link>
-                <Button onClick={handleOpenCreateModal} disabled={loading}>
-                  + Add New Habit
-                </Button>
-              </div>
-            </div>
-          </div>
-
           {/* Error Display */}
           {error && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">

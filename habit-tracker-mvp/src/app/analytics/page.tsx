@@ -1,13 +1,13 @@
 'use client'
 
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
+import { Header } from '@/components/layout/Header'
 import { StatsCard } from '@/components/analytics/StatsCard'
 import { HeatmapChart } from '@/components/analytics/HeatmapChart'
 import { CategoryChart } from '@/components/analytics/CategoryChart'
 import { Button } from '@/components/ui/Button'
 import { useAnalyticsStore } from '@/lib/stores/analyticsStore'
 import { useEffect } from 'react'
-import Link from 'next/link'
 
 export default function AnalyticsPage() {
   const { analytics, loading, error, fetchAnalytics, clearError } = useAnalyticsStore()
@@ -43,28 +43,19 @@ export default function AnalyticsPage() {
   return (
     <ProtectedRoute>
       <div className="min-h-screen bg-gray-50">
+        <Header 
+          showBackButton={true}
+          backHref="/"
+          title="Analytics"
+          subtitle="Track your progress and insights"
+          actions={
+            <Button onClick={() => fetchAnalytics()} disabled={loading}>
+              {loading ? 'Refreshing...' : 'Refresh Data'}
+            </Button>
+          }
+        />
+        
         <div className="container mx-auto py-8 px-4">
-          {/* Header */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900">Analytics</h1>
-                <p className="text-gray-600 mt-2">Track your progress and insights</p>
-              </div>
-              <div className="flex gap-3">
-                <Link
-                  href="/"
-                  className="border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-md transition-colors"
-                >
-                  ← Back to Dashboard
-                </Link>
-                <Button onClick={() => fetchAnalytics()} disabled={loading}>
-                  {loading ? 'Refreshing...' : 'Refresh Data'}
-                </Button>
-              </div>
-            </div>
-          </div>
-
           {/* Error Display */}
           {error && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
@@ -242,9 +233,9 @@ export default function AnalyticsPage() {
                 <p className="text-gray-600 mb-4">
                   Start tracking habits to see your progress and insights here.
                 </p>
-                <Link href="/" className="inline-block">
-                  <Button>Go to Dashboard</Button>
-                </Link>
+                <Button onClick={() => window.location.href = '/'}>
+                  Go to Dashboard
+                </Button>
               </div>
             </div>
           )}

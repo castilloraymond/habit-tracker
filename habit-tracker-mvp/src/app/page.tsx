@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
+import { Header } from '@/components/layout/Header'
 // Removed unused Card imports - using simplified layout
 import { HorizontalProgress } from '@/components/ui/HorizontalProgress'
 import { HabitItem } from '@/components/habits/HabitItem'
@@ -120,19 +121,21 @@ export default function Dashboard() {
   return (
     <ProtectedRoute>
       <div className="min-h-screen bg-gray-50">
-        <div className="container mx-auto py-8 px-4">
-          {/* Header with greeting and add button */}
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">{greeting}</h1>
-              <p className="text-gray-600 mt-1">{todayDate}</p>
-            </div>
+        <Header 
+          actions={
             <button
               onClick={handleOpenCreateModal}
               className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition-colors text-sm font-medium"
             >
               + Add
             </button>
+          }
+        />
+        <div className="container mx-auto py-8 px-4">
+          {/* Header with greeting */}
+          <div className="mb-6">
+            <h1 className="text-2xl font-bold text-gray-900">{greeting}</h1>
+            <p className="text-gray-600 mt-1">{todayDate}</p>
           </div>
 
           {/* Progress Bar */}
