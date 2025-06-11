@@ -51,7 +51,7 @@ export function Modal({
 
   const modalContent = (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
       onClick={handleOverlayClick}
     >
       {/* Backdrop */}
@@ -61,8 +61,8 @@ export function Modal({
       <div
         ref={modalRef}
         className={cn(
-          'relative z-10 w-full max-w-lg mx-4 bg-white rounded-lg shadow-xl',
-          'transform transition-all',
+          'relative z-10 w-full max-w-lg bg-white rounded-lg shadow-xl',
+          'transform transition-all max-h-[90vh] overflow-y-auto',
           className
         )}
         onClick={(e) => e.stopPropagation()}
@@ -72,7 +72,14 @@ export function Modal({
     </div>
   )
 
-  return createPortal(modalContent, document.getElementById('modal-root')!)
+  // Safely get modal root, fallback to body if not found
+  const modalRoot = document.getElementById('modal-root')
+  if (!modalRoot) {
+    console.warn('modal-root element not found, falling back to document.body')
+    return createPortal(modalContent, document.body)
+  }
+
+  return createPortal(modalContent, modalRoot)
 }
 
 // Modal Header Component
