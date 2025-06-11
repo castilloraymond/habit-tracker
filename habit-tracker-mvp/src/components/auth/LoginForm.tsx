@@ -63,13 +63,13 @@ export function LoginForm({ mode = 'signin', onModeChange, onSuccess }: LoginFor
   }
 
   return (
-    <div className="w-full max-w-md mx-auto">
-      <div className="bg-white py-8 px-6 shadow rounded-lg">
+    <div className="w-full min-w-[400px] max-w-md mx-auto">
+      <div className="bg-white py-8 px-6 shadow-lg rounded-lg border border-gray-200">
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">
+          <h2 className="text-2xl font-bold text-gray-900 text-center">
             {mode === 'signin' ? 'Sign In' : 'Sign Up'}
           </h2>
-          <p className="mt-2 text-sm text-gray-600">
+          <p className="mt-2 text-sm text-gray-600 text-center">
             {mode === 'signin' 
               ? 'Welcome back! Please sign in to your account.' 
               : 'Create your account to start tracking habits.'
@@ -77,7 +77,7 @@ export function LoginForm({ mode = 'signin', onModeChange, onSuccess }: LoginFor
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
           {mode === 'signup' && (
             <Input
               label="Full Name"

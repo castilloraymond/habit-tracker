@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 
@@ -55,18 +56,18 @@ export default function Dashboard() {
                   Welcome to Habit Tracker! Start building better habits today.
                 </p>
                 <div className="flex space-x-4">
-                  <a
+                  <Link
                     href="/habits"
                     className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors"
                   >
                     Create Your First Habit
-                  </a>
-                  <a
+                  </Link>
+                  <Link
                     href="/analytics"
                     className="border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-md transition-colors"
                   >
                     View Analytics
-                  </a>
+                  </Link>
                 </div>
               </div>
             </CardContent>
