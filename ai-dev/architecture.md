@@ -374,9 +374,9 @@ Since this is Next.js (not React Native), mobile testing strategy:
 ### Environment Configuration
 ```bash
 # .env.local
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+NEXT_PUBLIC_SUPABASE_URL=https://vddhdnwwyzzwexoshyoi.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZkZGhkbnd3eXp6d2V4b3NoeW9pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgyNzA2ODEsImV4cCI6MjA2Mzg0NjY4MX0.Ii10jwnMZw8M9BtCAoOIPYHUOAd35iuHv4gosPAeQBs
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZkZGhkbnd3eXp6d2V4b3NoeW9pIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0ODI3MDY4MSwiZXhwIjoyMDYzODQ2NjgxfQ.JhV7ACpgq3S_YDwrTPyQ2SqbkCdU8aIQM2xmQba2_as
 ```
 
 ### Build & Deploy Pipeline
