@@ -140,7 +140,7 @@ export default function Dashboard() {
             <HorizontalProgress
               completed={completionStats.completed}
               total={completionStats.total}
-              className="max-w-md"
+              className="w-full"
             />
           </div>
 

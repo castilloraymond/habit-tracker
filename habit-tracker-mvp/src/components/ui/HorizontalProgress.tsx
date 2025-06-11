@@ -17,10 +17,13 @@ export function HorizontalProgress({ completed, total, className = '' }: Horizon
           {completed}/{total}
         </span>
       </div>
-      <div className="w-full bg-gray-200 rounded-full h-3">
+      <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
         <div
-          className="bg-green-500 h-3 rounded-full transition-all duration-300 ease-out"
-          style={{ width: `${percentage}%` }}
+          className="bg-green-500 h-full rounded-full transition-all duration-300 ease-out"
+          style={{ 
+            width: `${percentage}%`,
+            minWidth: percentage > 0 ? '4px' : '0px' // Ensure visibility when there's progress
+          }}
         />
       </div>
     </div>
