@@ -59,14 +59,9 @@ export function HabitForm({ onSubmit, onCancel, isSubmitting = false }: HabitFor
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="pb-4 border-b border-gray-200">
-        <h2 className="text-xl font-semibold text-gray-900 mb-1">Create New Habit</h2>
-        <p className="text-sm text-gray-600">Build a new healthy routine to track daily.</p>
-      </div>
-      
+    <form onSubmit={handleSubmit} className="space-y-6 w-full">
       {errors.length > 0 && (
-        <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+        <div className="p-3 bg-red-50 border border-red-200 rounded-md mb-4">
           <ul className="text-sm text-red-700 space-y-1">
             {errors.map((error, index) => (
               <li key={index}>• {error}</li>
@@ -97,35 +92,37 @@ export function HabitForm({ onSubmit, onCancel, isSubmitting = false }: HabitFor
           />
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Category
-          </label>
-          <select
-            value={formData.category}
-            onChange={(e) => handleInputChange('category', e.target.value)}
-            className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition-colors duration-200 bg-white"
-          >
-            {HABIT_CATEGORIES.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.icon} {category.name}
-              </option>
-            ))}
-          </select>
-        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Category
+            </label>
+            <select
+              value={formData.category}
+              onChange={(e) => handleInputChange('category', e.target.value)}
+              className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition-colors duration-200 bg-white"
+            >
+              {HABIT_CATEGORIES.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.icon} {category.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Frequency
-          </label>
-          <select
-            value={formData.frequency}
-            onChange={(e) => handleInputChange('frequency', e.target.value as HabitFrequency)}
-            className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition-colors duration-200 bg-white"
-          >
-            <option value="daily">Daily</option>
-            <option value="weekly">Weekly</option>
-          </select>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Frequency
+            </label>
+            <select
+              value={formData.frequency}
+              onChange={(e) => handleInputChange('frequency', e.target.value as HabitFrequency)}
+              className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition-colors duration-200 bg-white"
+            >
+              <option value="daily">Daily</option>
+              <option value="weekly">Weekly</option>
+            </select>
+          </div>
         </div>
 
         <div>

@@ -57,8 +57,9 @@ export function LoginForm({ mode = 'signin', onModeChange, onSuccess }: LoginFor
       }
       
       onSuccess?.()
-    } catch (error: any) {
-      setErrors({ general: error.message || 'An error occurred' })
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred'
+      setErrors({ general: errorMessage })
     }
   }
 

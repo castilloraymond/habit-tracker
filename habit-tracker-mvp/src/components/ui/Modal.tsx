@@ -115,15 +115,15 @@ export function Modal({
   if (!isOpen) return null
 
   const sizeClasses = {
-    sm: 'max-w-md',
-    md: 'max-w-lg',
-    lg: 'max-w-2xl',
-    xl: 'max-w-4xl',
+    sm: 'max-w-md w-full sm:w-auto',
+    md: 'max-w-lg w-full sm:w-auto',
+    lg: 'max-w-5xl w-full sm:w-auto',
+    xl: 'max-w-5xl w-full sm:w-auto',
   }
 
   const modalContent = (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 md:p-8"
       onClick={handleOverlayClick}
     >
       {/* Backdrop */}
@@ -144,6 +144,7 @@ export function Modal({
           'relative bg-white rounded-lg shadow-xl w-full transition-all transform',
           'max-h-[90vh] overflow-hidden flex flex-col',
           'animate-in fade-in-0 zoom-in-95 duration-200',
+          'min-w-[320px]', // Ensure minimum width
           sizeClasses[size],
           className
         )}
@@ -170,7 +171,7 @@ interface ModalHeaderProps {
 
 export function ModalHeader({ children, onClose, className, id }: ModalHeaderProps) {
   return (
-    <div className={cn('flex items-center justify-between p-6 border-b border-gray-200 bg-white rounded-t-lg', className)}>
+    <div className={cn('flex items-center justify-between p-4 border-b border-gray-200 bg-white rounded-t-lg', className)}>
       <div id={id} className="text-lg font-semibold text-gray-900 pr-4">
         {children}
       </div>
@@ -210,7 +211,7 @@ interface ModalContentProps {
 
 export function ModalContent({ children, className, id }: ModalContentProps) {
   return (
-    <div id={id} className={cn('flex-1 overflow-y-auto p-6 bg-white', className)}>
+    <div id={id} className={cn('flex-1 overflow-y-auto px-6 pt-0.5 pb-6 bg-white', className)}>
       {children}
     </div>
   )

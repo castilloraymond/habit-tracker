@@ -4,14 +4,25 @@ interface StatsCardProps {
   subtitle?: string
   icon?: React.ReactNode
   trend?: 'up' | 'down' | 'neutral'
+  variant?: 'default' | 'primary' | 'success' | 'warning' | 'info'
 }
 
-export function StatsCard({ title, value, subtitle, icon, trend }: StatsCardProps) {
+export function StatsCard({ title, value, subtitle, icon, trend, variant = 'default' }: StatsCardProps) {
   const getTrendColor = () => {
     switch (trend) {
       case 'up': return 'text-green-600'
       case 'down': return 'text-red-600'
       default: return 'text-gray-600'
+    }
+  }
+
+  const getIconColor = () => {
+    switch (variant) {
+      case 'primary': return 'text-blue-500'
+      case 'success': return 'text-green-500'
+      case 'warning': return 'text-yellow-500'
+      case 'info': return 'text-purple-500'
+      default: return 'text-blue-500'
     }
   }
 
@@ -28,7 +39,7 @@ export function StatsCard({ title, value, subtitle, icon, trend }: StatsCardProp
           )}
         </div>
         {icon && (
-          <div className="text-blue-500 opacity-80">
+          <div className={`opacity-80 ${getIconColor()}`}>
             {icon}
           </div>
         )}

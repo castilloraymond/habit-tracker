@@ -1,7 +1,6 @@
 'use client'
 
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
-import { Header } from '@/components/layout/Header'
 import { StatsCard } from '@/components/analytics/StatsCard'
 import { HeatmapChart } from '@/components/analytics/HeatmapChart'
 import { CategoryChart } from '@/components/analytics/CategoryChart'
@@ -44,19 +43,20 @@ export default function AnalyticsPage() {
   return (
     <ProtectedRoute>
       <div className="min-h-screen bg-gray-50">
-        <Header 
-          showBackButton={true}
-          backHref="/"
-          title="Analytics"
-          subtitle="Track your progress and insights"
-          actions={
-            <Button onClick={() => fetchAnalytics()} disabled={loading}>
-              {loading ? 'Refreshing...' : 'Refresh Data'}
-            </Button>
-          }
-        />
-        
         <div className="container mx-auto py-8 px-4">
+          {/* Page Header */}
+          <div className="mb-8">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900">Analytics</h1>
+                <p className="text-gray-600 mt-2">Track your progress and insights</p>
+              </div>
+              <Button onClick={() => fetchAnalytics()} disabled={loading}>
+                {loading ? 'Refreshing...' : 'Refresh Data'}
+              </Button>
+            </div>
+          </div>
+
           {/* Error Display */}
           {error && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
@@ -101,6 +101,7 @@ export default function AnalyticsPage() {
                   value={analytics.overview.totalHabits}
                   subtitle={`${analytics.overview.totalHabits > 0 ? 'Active' : 'Get started!'}`}
                   icon={getHabitsIcon()}
+                  variant="primary"
                 />
                 <StatsCard
                   title="Today's Progress"
@@ -120,6 +121,7 @@ export default function AnalyticsPage() {
                       : 'down'
                   }
                   icon={getProgressIcon()}
+                  variant="success"
                 />
                 <StatsCard
                   title="Current Streak"
@@ -133,12 +135,14 @@ export default function AnalyticsPage() {
                   }
                   trend={analytics.overview.currentStreak >= 3 ? 'up' : 'neutral'}
                   icon={getStreakIcon()}
+                  variant="warning"
                 />
                 <StatsCard
                   title="Total Completions"
                   value={analytics.overview.totalCompletions}
                   subtitle={`${analytics.overview.weeklyCompletionRate}% this week`}
                   icon={getCompletionsIcon()}
+                  variant="info"
                 />
               </div>
 
@@ -159,7 +163,7 @@ export default function AnalyticsPage() {
                 />
 
                 {/* Quick Stats */}
-                <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-6 shadow-sm border border-blue-100">
                   <h3 className="text-lg font-medium text-gray-900 mb-4">Quick Stats</h3>
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
@@ -183,7 +187,7 @@ export default function AnalyticsPage() {
                         {analytics.overview.currentStreak} days
                       </span>
                     </div>
-                    <div className="flex justify-between items-center pt-2 border-t border-gray-100">
+                    <div className="flex justify-between items-center pt-2 border-t border-blue-200">
                       <span className="text-sm text-gray-500">Last Updated</span>
                       <span className="text-xs text-gray-400">
                         {new Date(analytics.lastUpdated).toLocaleString()}
@@ -194,63 +198,45 @@ export default function AnalyticsPage() {
               </div>
 
               {/* Insights Section */}
-              <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+              <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-6 shadow-sm border border-green-100">
                 <h3 className="text-lg font-medium text-gray-900 mb-4">Insights & Recommendations</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {analytics.overview.currentStreak === 0 && (
-                    <div className="p-4 bg-blue-50 rounded-lg">
-                      <h4 className="font-medium text-blue-900 mb-2">💡 Start Your Journey</h4>
-                      <p className="text-sm text-blue-800">
+                    <div className="p-4 bg-white rounded-lg shadow-sm">
+                      <h4 className="font-medium text-gray-900 mb-2">🎯 Get Started</h4>
+                      <p className="text-sm text-gray-600">
                         Complete at least one habit today to start building your streak!
                       </p>
                     </div>
                   )}
                   
+                  {analytics.overview.currentStreak >= 3 && analytics.overview.currentStreak < 7 && (
+                    <div className="p-4 bg-white rounded-lg shadow-sm">
+                      <h4 className="font-medium text-gray-900 mb-2">🔥 Building Momentum</h4>
+                      <p className="text-sm text-gray-600">
+                        Great progress! Keep going to reach a 7-day streak.
+                      </p>
+                    </div>
+                  )}
+                  
                   {analytics.overview.currentStreak >= 7 && (
-                    <div className="p-4 bg-green-50 rounded-lg">
-                      <h4 className="font-medium text-green-900 mb-2">🎉 Week Streak!</h4>
-                      <p className="text-sm text-green-800">
-                        Amazing! You've maintained your habits for a full week. Keep it up!
+                    <div className="p-4 bg-white rounded-lg shadow-sm">
+                      <h4 className="font-medium text-gray-900 mb-2">🏆 Streak Master</h4>
+                      <p className="text-sm text-gray-600">
+                        Amazing! You've built a solid habit streak. Keep it up!
                       </p>
                     </div>
                   )}
-
-                  {analytics.overview.todayCompletionRate >= 100 && (
-                    <div className="p-4 bg-purple-50 rounded-lg">
-                      <h4 className="font-medium text-purple-900 mb-2">⭐ Perfect Day!</h4>
-                      <p className="text-sm text-purple-800">
-                        You've completed all your habits today. Excellent work!
-                      </p>
-                    </div>
-                  )}
-
-                  {analytics.overview.totalHabits === 0 && (
-                    <div className="p-4 bg-yellow-50 rounded-lg">
-                      <h4 className="font-medium text-yellow-900 mb-2">🚀 Get Started</h4>
-                      <p className="text-sm text-yellow-800">
-                        Create your first habit to start tracking your progress and building better routines.
+                  
+                  {analytics.overview.todayCompletionRate < 50 && (
+                    <div className="p-4 bg-white rounded-lg shadow-sm">
+                      <h4 className="font-medium text-gray-900 mb-2">💪 Push Forward</h4>
+                      <p className="text-sm text-gray-600">
+                        You still have time today to complete more habits!
                       </p>
                     </div>
                   )}
                 </div>
-              </div>
-            </div>
-          )}
-
-          {/* Empty State */}
-          {!loading && !analytics && !error && (
-            <div className="text-center py-12">
-              <div className="bg-white rounded-lg p-8 max-w-md mx-auto">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  {getCompletionsIcon()}
-                </div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No Analytics Yet</h3>
-                <p className="text-gray-600 mb-4">
-                  Start tracking habits to see your progress and insights here.
-                </p>
-                <Button onClick={() => window.location.href = '/'}>
-                  Go to Dashboard
-                </Button>
               </div>
             </div>
           )}

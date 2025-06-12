@@ -59,7 +59,7 @@ export function EditHabitForm({ habit, onSubmit, onCancel, isSubmitting = false 
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-6 w-full">
       <div className="pb-4 border-b border-gray-200">
         <h2 className="text-xl font-semibold text-gray-900 mb-1">Edit Habit</h2>
         <p className="text-sm text-gray-600">Update your habit details.</p>
@@ -75,7 +75,7 @@ export function EditHabitForm({ habit, onSubmit, onCancel, isSubmitting = false 
         </div>
       )}
 
-      <div className="space-y-4">
+      <div className="space-y-6">
         <Input
           label="Habit Name"
           value={formData.title}
@@ -97,31 +97,33 @@ export function EditHabitForm({ habit, onSubmit, onCancel, isSubmitting = false 
           />
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Category
-          </label>
-          <select
-            value={formData.category}
-            onChange={(e) => handleInputChange('category', e.target.value)}
-            className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition-colors duration-200 bg-white"
-          >
-            {HABIT_CATEGORIES.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.icon} {category.name}
-              </option>
-            ))}
-          </select>
-        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Category
+            </label>
+            <select
+              value={formData.category}
+              onChange={(e) => handleInputChange('category', e.target.value)}
+              className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition-colors duration-200 bg-white"
+            >
+              {HABIT_CATEGORIES.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.icon} {category.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Frequency
-          </label>
-          <div className="p-3 bg-gray-50 rounded-md text-sm text-gray-600">
-            Currently: <span className="font-medium capitalize">{habit.frequency_type || 'Daily'}</span>
-            <br />
-            <span className="text-xs text-gray-500">Frequency cannot be changed after creation</span>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Frequency
+            </label>
+            <div className="p-3 bg-gray-50 rounded-md text-sm text-gray-600">
+              Currently: <span className="font-medium capitalize">{habit.frequency_type || 'Daily'}</span>
+              <br />
+              <span className="text-xs text-gray-500">Frequency cannot be changed after creation</span>
+            </div>
           </div>
         </div>
 

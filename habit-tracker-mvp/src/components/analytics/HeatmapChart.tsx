@@ -3,7 +3,7 @@ interface HeatmapChartProps {
   title?: string
 }
 
-export function HeatmapChart({ data, title = "Activity Heatmap" }: HeatmapChartProps) {
+export function HeatmapChart({ data, title = "30-Day Activity Heatmap" }: HeatmapChartProps) {
   // Generate last 30 days
   const generateDateRange = () => {
     const dates = []
@@ -19,67 +19,70 @@ export function HeatmapChart({ data, title = "Activity Heatmap" }: HeatmapChartP
   const maxValue = Math.max(...Object.values(data), 1)
 
   const getIntensity = (count: number) => {
-    if (count === 0) return 'bg-gray-100'
+    if (count === 0) return 'bg-gray-100 border-gray-200'
     const intensity = count / maxValue
-    if (intensity < 0.25) return 'bg-green-200'
-    if (intensity < 0.5) return 'bg-green-300'
-    if (intensity < 0.75) return 'bg-green-400'
-    return 'bg-green-500'
+    if (intensity < 0.25) return 'bg-green-100 border-green-200'
+    if (intensity < 0.5) return 'bg-green-200 border-green-300'
+    if (intensity < 0.75) return 'bg-green-300 border-green-400'
+    return 'bg-green-400 border-green-500'
   }
 
   const getWeekday = (dateStr: string) => {
     const date = new Date(dateStr + 'T12:00:00')
-    const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-    return weekdays[date.getDay()] || 'N/A'
+    const weekdays = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
+    return weekdays[date.getDay()]
   }
 
-  // Group dates by week
+  // Group dates by week (7 days each)
   const weeks = []
   for (let i = 0; i < dates.length; i += 7) {
     weeks.push(dates.slice(i, i + 7))
   }
 
   return (
-    <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
-      <h3 className="text-lg font-medium text-gray-900 mb-4">{title}</h3>
-      
-      <div className="space-y-2">
-        {weeks.map((week, weekIndex) => (
-          <div key={weekIndex} className="flex gap-1">
-            {week.filter((date): date is string => !!date).map((date) => {
-              const count = data[date] || 0
-              const day = getWeekday(date)
-              
-              return (
-                <div
-                  key={date}
-                  className={`
-                    w-8 h-8 rounded text-xs flex items-center justify-center font-medium
-                    ${getIntensity(count)}
-                    ${count > 0 ? 'text-white' : 'text-gray-500'}
-                  `}
-                  title={`${date}: ${count} completions`}
-                >
-                  {day[0]}
-                </div>
-              )
-            })}
-          </div>
-        ))}
-      </div>
-
-      {/* Legend */}
-      <div className="flex items-center justify-between mt-4 text-xs text-gray-500">
-        <span>Less</span>
-        <div className="flex gap-1">
-          <div className="w-3 h-3 bg-gray-100 rounded"></div>
-          <div className="w-3 h-3 bg-green-200 rounded"></div>
-          <div className="w-3 h-3 bg-green-300 rounded"></div>
-          <div className="w-3 h-3 bg-green-400 rounded"></div>
-          <div className="w-3 h-3 bg-green-500 rounded"></div>
+    <div className="bg-gradient-to-br from-gray-50 to-white rounded-lg p-6 shadow-sm border border-gray-100">
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-lg font-medium text-gray-900">{title}</h3>
+        <div className="text-sm text-gray-500">
+          {dates.length} days
         </div>
-        <span>More</span>
+      </div>
+      
+      <div className="flex flex-col space-y-2">
+        {/* Heatmap grid */}
+        <div className="grid grid-cols-7 gap-1">
+          {dates.map((date, index) => {
+            const count = data[date] || 0
+            const weekday = getWeekday(date)
+            
+            return (
+              <div
+                key={date}
+                className={`
+                  w-4 h-4 rounded-sm border transition-all duration-200 hover:scale-110 flex items-center justify-center
+                  ${getIntensity(count)}
+                `}
+                title={`${date}: ${count} completions`}
+              >
+                <span className="text-xs text-gray-600 opacity-50">{weekday}</span>
+              </div>
+            )
+          })}
+        </div>
+
+        {/* Legend */}
+        <div className="flex items-center justify-between w-full mt-6 text-xs text-gray-500">
+          <span>Less</span>
+          <div className="flex items-center space-x-1">
+            <div className="w-3 h-3 bg-gray-100 border border-gray-200 rounded-sm"></div>
+            <div className="w-3 h-3 bg-green-100 border border-green-200 rounded-sm"></div>
+            <div className="w-3 h-3 bg-green-200 border border-green-300 rounded-sm"></div>
+            <div className="w-3 h-3 bg-green-300 border border-green-400 rounded-sm"></div>
+            <div className="w-3 h-3 bg-green-400 border border-green-500 rounded-sm"></div>
+          </div>
+          <span>More</span>
+        </div>
       </div>
     </div>
   )
-} 
+}

@@ -23,12 +23,6 @@ export function Header({
   const pathname = usePathname()
   const { user, signOut } = useAuthStore()
 
-  const isActivePath = (path: string) => {
-    if (path === '/' && pathname === '/') return true
-    if (path !== '/' && pathname.startsWith(path)) return true
-    return false
-  }
-
   const handleLogout = async () => {
     try {
       await signOut()
@@ -37,15 +31,18 @@ export function Header({
     }
   }
 
+  // Determine if we should show the back button based on pathname
+  const shouldShowBackButton = pathname !== '/' && (pathname === '/analytics' || pathname === '/profile')
+
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Left side: Logo/Back + Title */}
           <div className="flex items-center gap-4">
-            {showBackButton ? (
+            {shouldShowBackButton ? (
               <Link
-                href={backHref}
+                href="/"
                 className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -58,52 +55,7 @@ export function Header({
                 📋 Habit Tracker
               </Link>
             )}
-            
-            {title && showBackButton && (
-              <div className="hidden sm:block">
-                <h1 className="text-xl font-semibold text-gray-900">{title}</h1>
-                {subtitle && (
-                  <p className="text-sm text-gray-600">{subtitle}</p>
-                )}
-              </div>
-            )}
           </div>
-
-          {/* Center: Navigation (only on main pages) */}
-          {!showBackButton && (
-            <nav className="hidden md:flex items-center gap-1">
-              <Link
-                href="/"
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  isActivePath('/') 
-                    ? 'bg-blue-100 text-blue-700' 
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-                }`}
-              >
-                Dashboard
-              </Link>
-              <Link
-                href="/manage-habits"
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  isActivePath('/manage-habits') 
-                    ? 'bg-blue-100 text-blue-700' 
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-                }`}
-              >
-                Manage Habits
-              </Link>
-              <Link
-                href="/analytics"
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  isActivePath('/analytics') 
-                    ? 'bg-blue-100 text-blue-700' 
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-                }`}
-              >
-                Analytics
-              </Link>
-            </nav>
-          )}
 
           {/* Right side: Actions + User Menu */}
           <div className="flex items-center gap-3">
@@ -111,21 +63,21 @@ export function Header({
             
             {/* User Menu */}
             <div className="flex items-center gap-3">
-              <div className="hidden sm:block text-right">
+              <Link href="/profile" className="hidden sm:block text-right hover:bg-gray-50 px-2 py-1 rounded-md transition-colors">
                 <p className="text-sm font-medium text-gray-900">
                   {user?.name || user?.email || 'User'}
                 </p>
                 <p className="text-xs text-gray-500">
                   {user?.email}
                 </p>
-              </div>
+              </Link>
               
               {/* Profile Picture / Avatar */}
-              <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+              <Link href="/profile" className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors">
                 <span className="text-white text-sm font-medium">
                   {((user?.name || user?.email || 'U')[0] || 'U').toUpperCase()}
                 </span>
-              </div>
+              </Link>
 
               {/* Logout Button */}
               <Button
@@ -142,16 +94,6 @@ export function Header({
             </div>
           </div>
         </div>
-
-        {/* Mobile Title (when back button is shown) */}
-        {title && showBackButton && (
-          <div className="sm:hidden pb-4">
-            <h1 className="text-xl font-semibold text-gray-900">{title}</h1>
-            {subtitle && (
-              <p className="text-sm text-gray-600 mt-1">{subtitle}</p>
-            )}
-          </div>
-        )}
       </div>
     </header>
   )

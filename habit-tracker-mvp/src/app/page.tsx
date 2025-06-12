@@ -3,7 +3,6 @@
 import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
-import { Header } from '@/components/layout/Header'
 import { HorizontalProgress } from '@/components/ui/HorizontalProgress'
 import { HabitItem } from '@/components/habits/HabitItem'
 import { Modal, ModalContent, ModalHeader } from '@/components/ui/Modal'
@@ -121,16 +120,6 @@ export default function Dashboard() {
   return (
     <ProtectedRoute>
       <div className="min-h-screen bg-gray-50">
-        <Header 
-          actions={
-            <button
-              onClick={handleOpenCreateModal}
-              className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition-colors text-sm font-medium"
-            >
-              + Add
-            </button>
-          }
-        />
         <div className="container mx-auto py-8 px-4">
           {/* Header with greeting */}
           <div className="mb-6">
@@ -190,9 +179,17 @@ export default function Dashboard() {
               {/* Ongoing Habits */}
               {ongoingHabits.length > 0 && (
                 <div>
-                  <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                    Ongoing
-                  </h2>
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-lg font-semibold text-gray-900">
+                      Ongoing
+                    </h2>
+                    <button
+                      onClick={handleOpenCreateModal}
+                      className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition-colors text-sm font-medium"
+                    >
+                      + Add
+                    </button>
+                  </div>
                   <div className="space-y-3">
                     {ongoingHabits.map((habit) => (
                       <HabitItem
@@ -206,6 +203,24 @@ export default function Dashboard() {
                       />
                     ))}
                   </div>
+                </div>
+              )}
+
+              {/* Show Add button even if no ongoing habits */}
+              {ongoingHabits.length === 0 && completedHabits.length > 0 && (
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-lg font-semibold text-gray-900">
+                      Ongoing
+                    </h2>
+                    <button
+                      onClick={handleOpenCreateModal}
+                      className="bg-red-50 hover:bg-red-500 text-white px-4 py-2 rounded-md transition-colors text-sm font-medium"
+                    >
+                      + Add
+                    </button>
+                  </div>
+                  <p className="text-gray-500 text-center py-8">All habits completed for today! 🎉</p>
                 </div>
               )}
 
@@ -246,48 +261,48 @@ export default function Dashboard() {
           </div>
         </div>
 
-              {/* Create Habit Modal */}
-      <Modal 
-        isOpen={isCreateModalOpen} 
-        onClose={handleCloseCreateModal}
-        size="lg"
-        aria-labelledby="create-habit-title"
-        aria-describedby="create-habit-description"
-      >
-        <ModalHeader id="create-habit-title" onClose={handleCloseCreateModal}>
-          Create New Habit
-        </ModalHeader>
-        <ModalContent id="create-habit-description">
-          <HabitForm
-            onSubmit={handleCreateHabit}
-            onCancel={handleCloseCreateModal}
-            isSubmitting={isSubmitting}
-          />
-        </ModalContent>
-      </Modal>
-
-      {/* Edit Habit Modal */}
-      <Modal 
-        isOpen={isEditModalOpen} 
-        onClose={handleCloseEditModal}
-        size="lg"
-        aria-labelledby="edit-habit-title"
-        aria-describedby="edit-habit-description"
-      >
-        <ModalHeader id="edit-habit-title" onClose={handleCloseEditModal}>
-          Edit Habit
-        </ModalHeader>
-        <ModalContent id="edit-habit-description">
-          {editingHabit && (
-            <EditHabitForm
-              habit={editingHabit}
-              onSubmit={handleEditSubmit}
-              onCancel={handleCloseEditModal}
+        {/* Create Habit Modal */}
+        <Modal 
+          isOpen={isCreateModalOpen} 
+          onClose={handleCloseCreateModal}
+          size="lg"
+          aria-labelledby="create-habit-title"
+          aria-describedby="create-habit-description"
+        >
+          <ModalHeader id="create-habit-title" onClose={handleCloseCreateModal}>
+            Create New Habit  
+          </ModalHeader>
+          <ModalContent id="create-habit-description">
+            <HabitForm
+              onSubmit={handleCreateHabit}
+              onCancel={handleCloseCreateModal}
               isSubmitting={isSubmitting}
             />
-          )}
-        </ModalContent>
-      </Modal>
+          </ModalContent>
+        </Modal>
+
+        {/* Edit Habit Modal */}
+        <Modal 
+          isOpen={isEditModalOpen} 
+          onClose={handleCloseEditModal}
+          size="lg"
+          aria-labelledby="edit-habit-title"
+          aria-describedby="edit-habit-description"
+        >
+          <ModalHeader id="edit-habit-title" onClose={handleCloseEditModal}>
+            Edit Habit
+          </ModalHeader>
+          <ModalContent id="edit-habit-description">
+            {editingHabit && (
+              <EditHabitForm
+                habit={editingHabit}
+                onSubmit={handleEditSubmit}
+                onCancel={handleCloseEditModal}
+                isSubmitting={isSubmitting}
+              />
+            )}
+          </ModalContent>
+        </Modal>
       </div>
     </ProtectedRoute>
   )
