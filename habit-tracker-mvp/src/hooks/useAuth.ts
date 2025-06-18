@@ -11,6 +11,7 @@ export const useAuth = () => {
     signOut,
     updateProfile,
     resetPassword,
+    updatePassword,
     initialize,
   } = useAuthStore()
 
@@ -28,5 +29,6 @@ export const useAuth = () => {
     signOut,
     updateProfile,
     resetPassword,
+    updatePassword,
   }
 } 

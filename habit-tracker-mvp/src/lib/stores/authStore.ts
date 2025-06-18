@@ -12,6 +12,7 @@ interface AuthState {
   signOut: () => Promise<void>
   updateProfile: (updates: Partial<AuthUser>) => Promise<void>
   resetPassword: (email: string) => Promise<void>
+  updatePassword: (password: string) => Promise<void>
   initialize: () => Promise<void>
   setUser: (user: AuthUser | null) => void
   setLoading: (loading: boolean) => void
@@ -92,6 +93,18 @@ export const useAuthStore = create<AuthState>()(
           await authService.resetPassword(email)
         } catch (error) {
           console.error('Reset password error:', error)
+          throw error
+        } finally {
+          set({ loading: false })
+        }
+      },
+
+      updatePassword: async (password: string) => {
+        set({ loading: true })
+        try {
+          await authService.updatePassword(password)
+        } catch (error) {
+          console.error('Update password error:', error)
           throw error
         } finally {
           set({ loading: false })

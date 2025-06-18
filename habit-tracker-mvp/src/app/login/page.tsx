@@ -6,7 +6,7 @@ import { LoginForm } from '@/components/auth/LoginForm'
 import { useAuthContext } from '@/components/auth/AuthProvider'
 
 export default function LoginPage() {
-  const [mode, setMode] = useState<'signin' | 'signup'>('signin')
+  const [mode, setMode] = useState<'signin' | 'signup' | 'reset'>('signin')
   const { isAuthenticated } = useAuthContext()
   const router = useRouter()
 
@@ -17,7 +17,9 @@ export default function LoginPage() {
   }, [isAuthenticated, router])
 
   const handleSuccess = () => {
-    router.push('/')
+    if (mode !== 'reset') {
+      router.push('/')
+    }
   }
 
   return (
