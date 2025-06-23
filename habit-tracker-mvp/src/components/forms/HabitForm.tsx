@@ -88,7 +88,7 @@ export function HabitForm({ onSubmit, onCancel, isSubmitting = false }: HabitFor
             onChange={(e) => handleInputChange('description', e.target.value)}
             placeholder="Add any additional details about your habit..."
             rows={3}
-            className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400 text-sm transition-colors duration-200 resize-none"
+            className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400 text-sm text-gray-900 bg-white transition-colors duration-200 resize-none"
           />
         </div>
 
@@ -100,7 +100,7 @@ export function HabitForm({ onSubmit, onCancel, isSubmitting = false }: HabitFor
             <select
               value={formData.category}
               onChange={(e) => handleInputChange('category', e.target.value)}
-              className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition-colors duration-200 bg-white"
+              className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm text-gray-900 transition-colors duration-200 bg-white"
             >
               {HABIT_CATEGORIES.map((category) => (
                 <option key={category.id} value={category.id}>
@@ -117,7 +117,7 @@ export function HabitForm({ onSubmit, onCancel, isSubmitting = false }: HabitFor
             <select
               value={formData.frequency}
               onChange={(e) => handleInputChange('frequency', e.target.value as HabitFrequency)}
-              className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition-colors duration-200 bg-white"
+              className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm text-gray-900 transition-colors duration-200 bg-white"
             >
               <option value="daily">Daily</option>
               <option value="weekly">Weekly</option>
