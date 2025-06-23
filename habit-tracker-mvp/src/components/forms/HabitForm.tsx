@@ -103,7 +103,7 @@ export function HabitForm({ onSubmit, onCancel, isSubmitting = false }: HabitFor
               className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm text-gray-900 transition-colors duration-200 bg-white"
             >
               {HABIT_CATEGORIES.map((category) => (
-                <option key={category.id} value={category.id}>
+                <option key={category.id} value={category.id} className="text-gray-900">
                   {category.icon} {category.name}
                 </option>
               ))}
@@ -119,8 +119,8 @@ export function HabitForm({ onSubmit, onCancel, isSubmitting = false }: HabitFor
               onChange={(e) => handleInputChange('frequency', e.target.value as HabitFrequency)}
               className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm text-gray-900 transition-colors duration-200 bg-white"
             >
-              <option value="daily">Daily</option>
-              <option value="weekly">Weekly</option>
+              <option value="daily" className="text-gray-900">Daily</option>
+              <option value="weekly" className="text-gray-900">Weekly</option>
             </select>
           </div>
         </div>
@@ -132,10 +132,10 @@ export function HabitForm({ onSubmit, onCancel, isSubmitting = false }: HabitFor
           <select
             value={formData.targetFrequency}
             onChange={(e) => handleInputChange('targetFrequency', parseInt(e.target.value))}
-            className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition-colors duration-200 bg-white"
+            className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition-colors duration-200 bg-white text-gray-900"
           >
             {[1, 2, 3, 4, 5].map((freq) => (
-              <option key={freq} value={freq}>
+              <option key={freq} value={freq} className="text-gray-900">
                 {freq} time{freq > 1 ? 's' : ''} per day
               </option>
             ))}
